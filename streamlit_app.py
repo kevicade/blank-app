@@ -8,29 +8,26 @@ st.write(
 import streamlit as st
 import pandas as pd
 
-# Create your dataframe
-df = pd.DataFrame({
-    'Column A': [1, 2, 3, 4, 5],
-    'Column B': ['A', 'B', 'C', 'D', 'E']
-})
 
-# Display the dataframe with single-row selection
-selection = st.dataframe(
+data = {
+    'Country': ['United States', 'Canada', 'Germany', 'France', 'Japan'],
+    'Capital': ['Washington, D.C.', 'Ottawa', 'Berlin', 'Paris', 'Tokyo']
+}
+
+
+df = pd.DataFrame(data)
+st.title('Countries and Their Capitals')
+
+event = st.dataframe(
     df,
-    on_select="rerun",
-    selection_mode="single-row"
+    on_select='rerun',
+    selection_mode='single-row'
 )
 
-# Check if a row is selected and display it
-if selection:
-    st.write("Selected row:")
-    st.write(selection)
+if len(event.selection['rows']):
+    selected_row = event.selection['rows'][0]
+    country = df.iloc[selected_row]['Country']
+    capital = df.iloc[selected_row]['Capital']
 
-# Add a button to modify the selected row
-if st.button("Modify Selected Row"):
-    if selection:
-        st.write("Modifying row:", selection.index[0])
-        # Add your modification logic here
-    else:
-        st.warning("Please select a row to modify.")
-
+    st.session_state['country_data'] = {'country': country, 'capital': capital}
+    st.page_link('pages/detail.py', label=f'Goto {country} Page', icon='🗺️')
